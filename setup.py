@@ -18,7 +18,7 @@ def get_version():
     raise ValueError('Could not find version.')
 
 setup(
-    name = 'savnet',
+    name = 'trans_savnet',
     version = get_version(),
     description='Python tools for evaluating trans-acting splicing changes caused by somatic mutations',
     url = 'https://github.com/friend1ws/TransSAVNet',
@@ -37,7 +37,7 @@ setup(
 
     packages = find_packages(exclude = ['tests']),
 
-    install_requires = ["annot_utils>=0.2.1", "pysam>=0.9.0", "junc_utils>=0.4.1", "intron_retention_utils>=0.5.1", "savnet>=0.3.3b1"],
+    # install_requires = ["annot_utils>=0.2.1", "pysam>=0.9.0", "junc_utils>=0.4.1", "intron_retention_utils>=0.5.1", "savnet>=0.3.3b1"],
     entry_points = {'console_scripts': ['trans_savnet = trans_savnet:main']}
 
 )

@@ -29,12 +29,12 @@ def create_parser():
     # parser.add_argument("--IR_pooled_control_file", default = None, type = str,
     #                     help = "the path to control data created by intron_retention_utils merge_control (default: %(default)s)")
 
-    parser.add_argument("--SJ_num_thres", type = int, default = 2,
+    parser.add_argument("--SJ_num_thres", type = int, default = 5,
                         help = "extract splicing junctions whose supporting numbers are equal or more than this value \
                         at least one sample in the cohort (default: %(default)s)")
 
-    parser.add_argument("--keep_annotated", default = False, action = 'store_true',
-                        help = "do not remove annotated splicing junctions")
+    # parser.add_argument("--keep_annotated", default = False, action = 'store_true',
+    #                     help = "do not remove annotated splicing junctions")
 
     # parser.add_argument("--IR_num_thres", type = int, default = 3,
     #                     help = "extract intron retentions whose supporting numbers are equal or more than this value \
