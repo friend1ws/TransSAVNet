@@ -45,7 +45,7 @@ def create_parser():
     #                     is equal or more than this value and supporting numbers are equal or more than IR_num_thres \
     #                     at least one sample in the cohort (default: %(default)s)")
 
-    parser.add_argument("--permutation_num", type = int, default = 100,
+    parser.add_argument("--permutation_num", type = int, default = 10,
                         help = "the number of permutation for calculating false discovery rate")
 
     parser.add_argument("--alpha0", type = float, default = 1.0,

@@ -37,6 +37,9 @@ def trans_savnet_main(args):
     link2info = {}
     sj_file_list = []
 
+    ##########
+    # organize mutation information
+    logger.info("Organizing mutation data.")
     mut2ind = {}
     tind = 0
     sample_ind = 0
@@ -63,12 +66,17 @@ def trans_savnet_main(args):
 
             sample_ind = sample_ind + 1                
 
+    ##########
+    logger.info("Merging splicing junction data.")
     preprocess.merge_SJ2(sj_file_list, args.output_prefix + ".SJ_merged.txt", args.SJ_pooled_control_file, args.SJ_num_thres, True)
 
+    logger.info("Adding annotation to splicing junction data.")
     annotate_commands = ["junc_utils", "annotate", args.output_prefix + ".SJ_merged.txt", args.output_prefix + ".SJ_merged.annot.txt"]
     subprocess.call(annotate_commands)
+    ##########
 
-
+    ##########
+    logger.info("Creating pickles of splicing association network instances.")
     out_s = open(args.output_prefix + ".splicing_mutation.network.pickles", 'wb')
     with open(args.output_prefix + ".SJ_merged.annot.txt", 'r') as hin:
         header2ind = {}
@@ -117,26 +125,30 @@ def trans_savnet_main(args):
     out_s.close()
 
 
-    # sav_list_target = analysis_network.extract_sav_list(args.output_prefix + ".splicing_mutation.network.pickles", 3.0, 0.5, 0.90, 3.0, 2, 
-    #                                                     1.0, 1.0, 1.0, 0.01, permutation = False)
-
+    ##########
+    logger.info("Extracting splicing associated variants.")
     sav_list_target = analysis_network.extract_sav_list(args.output_prefix + ".splicing_mutation.network.pickles", 
                                                         args.effect_size_thres, 0.5, 0.9, args.log_BF_thres, 2, 
                                                         args.alpha0, args.beta0, args.alpha1, args.beta1, permutation = False)
 
+    ##########
+    logger.info("Extracting of splicing associated variants on permutation pairs to estimate false positive ratios.")
     sav_lists_permutation = []
-    for i in range(10):
+    for i in range(args.permutation_num):
         print >> sys.stderr, "Permutation: " + str(i)
-        # temp_sav_list = analysis_network.extract_sav_list(output_prefix + ".splicing_mutatoin.network.pickles", 3.0, 0.5, 0.90, 3.0, 2,
-        #                                                   1.0, 1.0, 1.0, 0.01, permutation = True)
         temp_sav_list = analysis_network.extract_sav_list(args.output_prefix + ".splicing_mutation.network.pickles", 
                                                           args.effect_size_thres, 0.5, 0.9, args.log_BF_thres, 2,
                                                           args.alpha0, args.beta0, args.alpha1, args.beta1, permutation = True)
 
         sav_lists_permutation.append(temp_sav_list)
 
+    ##########
+    logger.info("Adding Q-values to splicing associated variants.")
     analysis_network.add_qvalue_to_sav_list(sav_list_target, sav_lists_permutation)
 
+
+    ##########
+    logger.info("Generating final outputs.")
     with open(args.output_prefix + ".savnet.result.txt", 'w') as hout:
         print >> hout, Sav.print_header_mut
         for sav in sav_list_target:
@@ -153,5 +165,5 @@ def trans_savnet_main(args):
 
         subprocess.call(["rm", "-rf", args.output_prefix + ".SJ_merged.txt"])
         subprocess.call(["rm", "-rf", args.output_prefix + ".SJ_merged.annot.txt"])
-        subprocess.call(["rm", "-rf", args.output_prefix + ".splicing_mutatoin.network.pickles"]) 
+        subprocess.call(["rm", "-rf", args.output_prefix + ".splicing_mutation.network.pickles"]) 
 
